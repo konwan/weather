@@ -3,7 +3,7 @@
 # bash ./tmp.sh -t forecast
 ##################################
 
-now=$(pwd)
+now=/opt/weather
 user=weacrawler
 prj=weather
 prefix=wc
@@ -20,19 +20,24 @@ while getopts "t:" opt; do
   esac
 done
 
+cd ${now}
+
 historydata(){
     echo ${time} >> ${now}/log/${type}.log
-    #python ${now}/src/history.py
+    #python -c "import os; print(os.path.dirname(os.path.realpath('__file__')))" >> ${now}/log/${type}.log
+    /usr/local/bin/python ${now}/src/history.py >> ${now}/log/${type}.log
 }
 
 forecastdata(){
     echo ${time} >> ${now}/log/${type}.log
-    #python ${now}/src/forecast.py
+    #pwd >> ${now}/log/${type}.log
+    /usr/local/bin/python ${now}/src/forecast.py  >> ${now}/log/${type}.log
 }
 
 dailydata(){
     echo ${time} >> ${now}/log/${type}.log
-    #python ${now}/src/daily.py
+    /usr/local/bin/python ${now}/tmp.py >> ${now}/log/${type}.log
+    /usr/local/bin/python ${now}/src/daily.py  >> ${now}/log/${type}.log
 }
 
 if [ "${type}" == 'forecast' ]; then
@@ -42,4 +47,7 @@ elif [ "${type}" == 'daily' ];then
 else
     historydata
 fi
+~
+
+
 

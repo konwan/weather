@@ -1,3 +1,9 @@
-30 5 * * *  sh /opt/weather/getdata.sh -t daily
-30 5 1 * *  sh /opt/weather/getdata.sh -t history
-30 6 * * *  sh /opt/weather/getdata.sh -t forecast
+#30 5 * * *  sh /opt/weather/getdata.sh -t daily
+#30 5 1 * *  sh /opt/weather/getdata.sh -t history
+#30 6 * * *  sh /opt/weather/getdata.sh -t forecast
+# PYTHONIOENCODING=utf8 fail
+#*/1 * * * * LC_ALL=C.UTF-8 bash /opt/weather/getdata.sh -t daily    >> /opt/weather/log/xxx.log  2>&1
+#*/1 * * * * LC_ALL=C.UTF-8 bash /opt/weather/getdata.sh -t history
+#*/1 * * * * LC_ALL=C.UTF-8 bash /opt/weather/getdata.sh -t forecast >> /opt/weather/log/yyy.log  2>&1
+#*/1 * * * * /usr/local/bin/python /opt/weather/src/daily.py >> /opt/weather/log/xxx.log
+#*/1 * * * * PATH="/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" /tmp/x.sh

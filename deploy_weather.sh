@@ -29,6 +29,8 @@ cleardocker(){
 }
 
 
+
+
 # [step1] - new docker img
 cleardocker 0 0
 # sudo docker build -t ${img}  .
@@ -49,10 +51,16 @@ fi
 # [step2] - new docker container
 #echo "docker run --name crawler -p 3306:3306 -v /Users/data/Desktop/cindy/gomi/docker/my:/mikudb -v /Users/data/Desktop/cindy/gomi/docker/my.conf:/etc/mysql/my.cnf  -e MYSQL_ROOT_PASSWORD=0000 -d mariadb:10.1"
 
+# sudo docker rm -f ${con}
 # sudo docker run -t --name ${con} -v ${now}:/opt/${prj} ${img}
 # sudo docker run --rm -it --name crawler2 -v /home/cindy/weather:/opt/weather weather_img bash
+
+# sudo docker ps -a
+
 
 # service cron stop
 # service cron start
 # service cron status
 # cat '' >> /var/spool/cron/crontabs/root
+
+
