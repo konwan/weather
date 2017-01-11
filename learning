@@ -1,0 +1,17 @@
+1. manually ok, cron not work
+   check cron env
+   http://jiemian.blog.51cto.com/11739924/1852092
+   http://www.drupal001.com/2012/04/shell-utf8/
+   * python use full path
+   * ascii code
+     set LC_ALL=C.UTF-8
+   
+2. cron echo not work
+   default location /root
+   
+3. others
+   redirect 2>&1
+   http://ibookmen.blogspot.tw/2010/11/unix-2.html
+   
+4. keep docker container alive with /bin/bash -c " tail -f /dev/null "    
+   --restart=always 
