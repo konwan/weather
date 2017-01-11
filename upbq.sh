@@ -104,7 +104,7 @@ uploadfiletobq(){
     getschema
 
     bq rm -f ${bqtb}
-    bq load --source_format=CSV --field_delimiter=',' --encoding=UTF-8 \
+    bq load --source_format=CSV --field_delimiter=',' --encoding=UTF-8 --quote="'" \
                   --max_bad_records=3 --skip_leading_rows=0 ${bqtb} ${filename} ${schema}
 
     res=$(bq query "select count(*) from ${ds}.${tb}")
