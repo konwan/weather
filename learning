@@ -13,4 +13,5 @@
    redirect 2>&1
    http://ibookmen.blogspot.tw/2010/11/unix-2.html
    
-4. keep docker container alive with /bin/bash -c " tail -f /dev/null "   
+4. keep docker container alive with /bin/bash -c " tail -f /dev/null "    
+   --restart=always 
