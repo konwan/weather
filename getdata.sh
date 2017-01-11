@@ -36,7 +36,7 @@ forecastdata(){
 
 dailydata(){
     echo ${time} >> ${now}/log/${type}.log
-    /usr/local/bin/python ${now}/tmp.py >> ${now}/log/${type}.log
+    #/usr/local/bin/python ${now}/tmp.py >> ${now}/log/${type}.log
     /usr/local/bin/python ${now}/src/daily.py  >> ${now}/log/${type}.log
 }
 
