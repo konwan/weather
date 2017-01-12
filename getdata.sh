@@ -47,7 +47,3 @@ elif [ "${type}" == 'daily' ];then
 else
     historydata
 fi
-~
-
-
-
