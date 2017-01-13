@@ -39,6 +39,7 @@ getcode(){
 startspider(){
     showinfo "Deploy spider env"
     ssh -t ${user}@${host} "whoami; cd ${prj}; sh deploy_weather.sh; crontab -l;"
+    sed -i "s|/opt/upbq.sh|${now}/upbq.sh|g" upbq.cron
     crontab upbq.cron
 }
 
