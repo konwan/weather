@@ -1,10 +1,11 @@
 #!/bin/sh
 ##################################
-# bash ./tmp.sh -t forecast |daily |history
+# sh upbq.sh -t forecast |daily |history
 ##################################
 
-now=$(pwd)
+# now=$(pwd)
 user=weacrawler
+now=/home/${user}/spiderman
 
 prj=gomi-dev
 ds=cindy_test
@@ -32,6 +33,11 @@ upload_dir=${now}/up/${gettype}
 filename=''
 schema=''
 
+showinfo(){
+    msg=$1
+    echo "${dt} $msg"
+}
+
 getschema(){
     file_cols=$(cat ${filename} |head -n 1|awk -F ',' '{print NF}')
     #sudo dpkg-reconfigure dash
@@ -43,37 +49,16 @@ getschema(){
             schema+="col${i}:string,"
         fi
     done
-    #echo ${schema}
 }
 
 bqlisttb(){
-    # list project
     # bq --format=json ls -p
     # bq mk [DATASET_ID]
     # bq ls gomi-dev:
-    # list dataset
     # bq --format=json ls -d
-
-    # list prj:ds
     # bq ls ${prj}:${ds}
-    #        tableId             Type
-    # ------------------------ ----------
-    #  nb_store_list            EXTERNAL
-    #  weather                  TABLE
-    #  weather201612            TABLE
-    #  weather_cities_all       VIEW
 
     bq show ${bqtb}
-    #   Last modified           Schema          Total Rows   Total Bytes   Expiration
-    # ----------------- ---------------------- ------------ ------------- ------------
-    #  28 Dec 15:10:14   |- date: string        5689379      339870630
-    #                    |- hightemp: string
-    #                    |- lowtemp: string
-    #                    |- status: string
-    #                    |- winddir: string
-    #                    |- windpower: string
-    #                    |- city: string
-
     bq head -n 4 ${bqtb}
 
     # echo ${time} >> ${now}/log/${type}.log
@@ -112,10 +97,10 @@ uploadfiletobq(){
     file_cnt=$(wc -l ${filename} |awk '{print $1}')
 
     if [ "${upload_cnt}" == ${file_cnt} ]; then
-        echo "[fiinished - ${file_cnt}] upload ${filename} to ${ds}.${tb} \n\n"
+        showinfo "[fiinished - ${file_cnt}] upload ${filename} to ${ds}.${tb} \n\n"
         bqlisttb
     else
-        echo "[fail - ${file_cnt}] upload count ${upload_cnt}"
+        showinfo "[fail - ${file_cnt}] upload count ${upload_cnt}"
     fi
 }
 
@@ -125,7 +110,7 @@ uploadfiletobq(){
 #bq --nosync query --batch "SELECT name,count FROM mydataset.babynames WHERE gender = 'M' ORDER BY count DESC LIMIT 6"
 
 getfile
-echo "start to handle ${filename}"
+showinfo "start to handle ${filename}"
 uploadfiletobq
 
 # ls -al ${upload_dir}

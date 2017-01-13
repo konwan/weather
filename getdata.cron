@@ -1,4 +1,4 @@
 30 6 * * * LC_ALL=C.UTF-8 bash /opt/weather/getdata.sh -t daily    >> /opt/weather/log/xxx.log  2>&1
-30 5 * * * LC_ALL=C.UTF-8 bash /opt/weather/getdata.sh -t history  >> /opt/weather/log/zzz.log  2>&1
+30 5 1 * * LC_ALL=C.UTF-8 bash /opt/weather/getdata.sh -t history  >> /opt/weather/log/zzz.log  2>&1
 30 7 * * * LC_ALL=C.UTF-8 bash /opt/weather/getdata.sh -t forecast >> /opt/weather/log/yyy.log  2>&1
 */1 * * * * echo $(date) >> /opt/weather/log/test.log 
