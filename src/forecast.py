@@ -16,9 +16,8 @@ class Spider(object):
         self.raw_url = url
         self.url = Request(url)
         self.datatype = "7days"
-        # self.dir_path = os.path.dirname(os.path.realpath('__file__'))
-        self.dir_path = "/opt/weather"
-        self.datadir = '{}/data/{}/{}'.format(self.dir_path, self.datatype, self.city)
+        self.dir_path = os.path.dirname(os.path.realpath('__file__'))
+        self.datadir = '{}/{}/{}'.format(self.dir_path, self.datatype, self.city)
         self.raw = None
         self.res = None
         self.alldays = []
@@ -30,7 +29,8 @@ class Spider(object):
         if not os.path.exists(self.datadir):
             os.makedirs(self.datadir)
 
-        self.url.add_header('User-Agent', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.95 Safari/537.36')
+
+        self.url.add_header('User-Agent', 'Mozilla/5.0 Chrome/55.0.2883.95 Safari/{}.36'.format(random.randint(0, 30)))
         self.url.add_header('Referer', self.city)
         try:
             time.sleep(random.randint(0, 2))
@@ -61,6 +61,7 @@ class Spider(object):
                 windpower = tmp[8].split(' ')[1]
             except Exception as e:
                 print('[3Error] {} => {}'.format(self.raw_url, str(e)))
+                time.sleep(10)
                 sys.exit()
             self.alldays.append([self.city, date, htemp, ltemp, status, winddir, windpower, self.updatetime])
 
@@ -77,11 +78,11 @@ class Spider(object):
                 winddir = j[6].split(' ')[0]  if len(j) == 7 else ''
                 windpower = j[6].split(' ')[1] if len(j) == 7 else ''
             except Exception as e:
+                time.sleep(10)
                 print('[4Error] {} {} => {}'.format(j, self.raw_url, str(e)))
                 break
             self.alldays.append([self.city, date, htemp, ltemp, status, winddir, windpower, self.updatetime])
         self.writeoutput()
-
 
     def getno7(self):
         for i in range(1,7):
@@ -116,7 +117,6 @@ class Job(object):
     def no7(self):
         Spider(self.city, self.url).getno7()
 
-
 def doJob(*args):
     st = datetime.datetime.now()
     # time.sleep(random.randint(0, 2))
@@ -144,7 +144,6 @@ def addweatherjob(cities):
 def printformat(msg):
     print("~~~~~~~~~~~~~~{}~~~~~~~~~~~~~".format(msg))
 
-
 def getCities():
     raw = urlopen('http://www.tianqi.com/chinacity.html')
     raw_data = BeautifulSoup(raw.read(), "lxml", from_encoding="GBK")
@@ -160,21 +159,19 @@ def getCities():
 
 if __name__ == "__main__":
     datatype = "7days"
-    #dir_path = os.path.dirname(os.path.realpath('__file__'))
-    dir_path = "/opt/weather"
-    datadir = '{}/data/{}'.format(dir_path, datatype)
+    dir_path = os.path.dirname(os.path.realpath('__file__'))
+    datadir = '{}/{}'.format(dir_path, datatype)
     threads = []
     cities = getCities()
 
-    que = addweatherjob(cities[0:2])
+    que = addweatherjob(cities)
 
     if not os.path.exists(datadir):
         os.makedirs(datadir)
 
-    for j in range(1):
+    for j in range(30):
         t = threading.Thread(target=doJob, name='Doer{}'.format(j), args=(que,))
         threads.append(t)
         t.start()
 
         # print('add {} threads to run'.format(len(threads)))
-

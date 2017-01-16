@@ -14,12 +14,10 @@ import random
 
 class DailyWeather(object):
     def __init__(self):
-        # self.phantomjs_path = r"/Users/data/Downloads/phantomjs-2.1.1-macosx/bin/phantomjs"
+        self.phantomjs_path = r"/Users/data/Downloads/phantomjs-2.1.1-macosx/bin/phantomjs"
         self.url = "http://tianqi.2345.com/wea_history/71294.htm"
         self.agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.9; rv:25.0) Gecko/20100101 Firefox/25.0 "
-        #self.dir_path = os.path.dirname(os.path.realpath('__file__'))
-        self.dir_path = "/opt/weather"
-        self.phantomjs_path = r"{}/phantomjs/bin/phantomjs".format(self.dir_path)
+        self.dir_path = os.path.dirname(os.path.realpath('__file__'))
         self.datatype = "daily"
         self.datadir = None
         self.filename = None
@@ -30,7 +28,6 @@ class DailyWeather(object):
         self.data = []
         self.day = []
         # self.getGeoData()
-
 
     def cusHeader(self):
         # print("[DW] - customerize header")
@@ -51,7 +48,6 @@ class DailyWeather(object):
 
     def outputFile(self, data):
         self.checkDir()
-        print(self.dir_path)
         file = open(self.filename, 'w')
         for i in data:
             if self.quote :
@@ -61,20 +57,16 @@ class DailyWeather(object):
             file.write("{}\n".format(",".join(result)))
         file.close()
 
-
     def getGeoData(self):
-        self.datadir = '{}/data/{}'.format(self.dir_path, self.datatype)
+        self.datadir = '{}/{}'.format(self.dir_path, self.datatype)
         self.filename = '{}/wea2345_city.csv'.format(self.datadir)
         self.cusHeader()
         print("[DW] - start get geodata")
-        print("[DW] - {}".format(self.url))
         self.driver.get(self.url)
-        print("[DW] - {}".format(self.driver))
         self.driver.find_element_by_css_selector("#switchHisCity").click()
-        provs = [x for x in self.driver.find_elements_by_css_selector("#selectProv > option:nth-of-type(31)")]
-        print("[DW] - {}".format(provs))
+        provs = [x for x in self.driver.find_elements_by_css_selector("#selectProv > option")] # :nth-of-type(31)
         for i in provs:
-            print("[DW] - {} {}".format(i.text, i.get_attribute('value')))
+            print("[DW] - {}".format(i))
             self.driver.find_element_by_css_selector("#selectProv > option[value='{}']".format(i.get_attribute('value'))).click()
             cities = [x for x in self.driver.find_elements_by_css_selector("#chengs_ls > option")]
             for j in cities:
@@ -86,7 +78,6 @@ class DailyWeather(object):
                     self.geo.append(flattmp)
         if self.outputlist:
             self.outputFile(self.geo)
-
 
     def getData(self):
         print(self.geo)
@@ -117,12 +108,11 @@ class DailyWeather(object):
         print(self.data)
         self.driver.close()  # 關閉瀏覽器
 
-
     def getDataMulti(self, city):
         i = city
         today = datetime.datetime.now()
         month = (today - datetime.timedelta(days=1)).strftime("%Y%m")
-        self.datadir = '{}/data/{}/{}'.format(self.dir_path, self.datatype, i[8])
+        self.datadir = '{}/{}/{}'.format(self.dir_path, self.datatype, i[8])
         self.filename = '{}/{}_{}.csv'.format(self.datadir, i[8], month)
         # self.geo = ['X', '香港', 'X', '香港', 'X', '香港', '39', '39,0', '45007']
 
@@ -152,7 +142,6 @@ class DailyWeather(object):
         # print(self.data)
         self.driver.close()  # 關閉瀏覽器
         self.outputFile(self.data)
-
 
     def __repr__(self):
         # return '<DailyWeather>'
@@ -189,11 +178,9 @@ if __name__ == "__main__":
     dw = DailyWeather()
     dw.getGeoData()
     cities = dw.geo
-
     que = dailyweather(cities)
 
-    for j in range(2):
+    for j in range(15):
         t = threading.Thread(target=doJob, name='Doer{}'.format(j), args=(que,))
         threads.append(t)
         t.start()
-
