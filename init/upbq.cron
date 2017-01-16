@@ -1,4 +1,4 @@
 */1 * * * * echo $(date) >> /tmp/test20170114.log
 30 8 * * * sudo sh /opt/upbq.sh -t daily    >> /tmp/up_daily.log  2>&1
-30 7 1 * * sudo sh /opt/upbq.sh -t history  >> /tmp/log/up_history.log  2>&1
+30 7 1 * * sudo sh /opt/upbq.sh -t history  >> /tmp/up_history.log  2>&1
 10 9 * * * sudo sh /opt/upbq.sh -t forecast >> /tmp/up_forecast.log  2>&1
