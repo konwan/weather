@@ -143,7 +143,7 @@ class ForecastWeather(object):
                         city = tmp[2].split('.')[0]
                     self.cities.append((city, url))
                     # que.put(Job(city, url))
-# 
+#
 # class Job(object):
 #     def __init__(self, city, url):
 #         self.city = city
@@ -170,22 +170,22 @@ class ForecastWeather(object):
 # def printformat(msg):
 #     print("~~~~~~~~~~~~~~{}~~~~~~~~~~~~~".format(msg))
 
-
-if __name__ == "__main__":
-    datatype = "7days"
-    dir_path = os.path.dirname(os.path.realpath('__file__'))
-    datadir = '{}/{}'.format(dir_path, datatype)
-    threads = []
-    cities = getCities()
-
-    que = addweatherjob(cities)
-
-    if not os.path.exists(datadir):
-        os.makedirs(datadir)
-
-    for j in range(30):
-        t = threading.Thread(target=doJob, name='Doer{}'.format(j), args=(que,))
-        threads.append(t)
-        t.start()
+#
+# if __name__ == "__main__":
+#     datatype = "7days"
+#     dir_path = os.path.dirname(os.path.realpath('__file__'))
+#     datadir = '{}/{}'.format(dir_path, datatype)
+#     threads = []
+#     cities = getCities()
+#
+#     que = addweatherjob(cities)
+#
+#     if not os.path.exists(datadir):
+#         os.makedirs(datadir)
+#
+#     for j in range(30):
+#         t = threading.Thread(target=doJob, name='Doer{}'.format(j), args=(que,))
+#         threads.append(t)
+#         t.start()
 
         # print('add {} threads to run'.format(len(threads)))
