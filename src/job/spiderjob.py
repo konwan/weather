@@ -29,7 +29,7 @@ class AllSpiderJobs(object):
         st = datetime.datetime.now()
         while self.jobque.qsize() > 0:
             job = self.jobque.get()
-            job.getdata()
+            # job.getdata()
         et = datetime.datetime.now()
         totalsec = (et - st).seconds
         print("[{}] Spending time={}!".format(threading.current_thread().name, totalsec))
