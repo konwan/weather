@@ -9,11 +9,12 @@ import random
 from bs4 import BeautifulSoup
 from urllib.request import urlopen, Request
 import os, sys
+from outputdata import OutputData
 
-class ForecastWeather(object):
-    def __init__(self):
+class ForecastWeather(OutputData):
+    def __init__(self, *args, **kwargs):
+        super(ForecastWeather, self).__init__(*args, **kwargs)
         self.cities = []
-        self.quote = False
         self.datatype = "forecast"
         self.dir_path = os.path.dirname(os.path.realpath('__file__'))
         # self.city = city
@@ -41,15 +42,6 @@ class ForecastWeather(object):
     #         except Exception as e:
     #             print('[open page fail] {} => {}'.format(raw_url, str(e)))
     #             sys.exit()
-
-    def outputData(self, datadir, filename, data):
-        if not os.path.exists(datadir):
-            os.makedirs(datadir)
-
-        file = open(filename, 'w')
-        for i in data:
-            file.write("{}\n".format(",".join(i)))
-        file.close()
 
     # def getdata(self):
     #     for i in range(3):
@@ -107,11 +99,7 @@ class ForecastWeather(object):
                     winddir = raw_data.select('ul > li:nth-of-type(4)')[0].text.split(' ')[0]
                     windpower = raw_data.select('ul > li:nth-of-type(4)')[0].text.split(' ')[1]
                     day = [city, date, htemp, ltemp, status, winddir, windpower, self.updatetime]
-
-                    if self.quote :
-                        data.append(["'{}'".format(x) for x in day])
-                    else :
-                        data.append(["{}".format(x) for x in day])
+                    data.append(["{}".format(x) for x in day])
 
                 except Exception as e:
                     print('[get data fail] {} => {}'.format(raw_url, str(e)))

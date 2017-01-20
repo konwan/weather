@@ -12,9 +12,11 @@ import queue
 import datetime
 import threading
 import random
+from outputdata import OutputData
 
-class DailyWeather(object):
-    def __init__(self):
+class DailyWeather(OutputData):
+    def __init__(self, *args, **kwargs):
+        super(DailyWeather, self).__init__(*args, **kwargs)
         # self.dir_path = "/opt/weather"
         # self.phantomjs_path = r"{}/phantomjs/bin/phantomjs".format(self.dir_path)
         self.phantomjs_path = r"/Users/data/Downloads/phantomjs-2.1.1-macosx/bin/phantomjs"
@@ -25,7 +27,6 @@ class DailyWeather(object):
         self.datatype = "daily"
         # self.datadir = None
         # self.filename = None
-        self.quote = False
         # self.outputlist = False
         # self.driver = None
         # self.geo = []
@@ -47,26 +48,6 @@ class DailyWeather(object):
         driver = webdriver.PhantomJS(desired_capabilities=dcap, service_args=serargs, executable_path=self.phantomjs_path)
         return driver
         #self.driver.add_cookie({'Accept-Encoding':'gzip, deflate, sdch', 'User-Agent':self.agent})
-
-    # def outputFile(self, data):
-    #     self.checkDir()
-    #     file = open(self.filename, 'w')
-    #     for i in data:
-    #         if self.quote :
-    #             result = ["'{}'".format(x) for x in i]
-    #         else :
-    #             result = i
-    #         file.write("{}\n".format(",".join(result)))
-    #     file.close()
-
-    def outputData(self, datadir, filename, data):
-        if not os.path.exists(datadir):
-            os.makedirs(datadir)
-
-        file = open(filename, 'w')
-        for i in data:
-            file.write("{}\n".format(",".join(i)))
-        file.close()
 
     def getCities(self):
         driver = self.cusHeader()
@@ -109,7 +90,7 @@ class DailyWeather(object):
             # driver.set_window_size(1920,1080)
             driver.get(url)
             res = BeautifulSoup(driver.page_source, "lxml")
-            driver.quit()  
+            driver.quit()
             daydata = res.select('#weather_tab > table > tbody > tr')
             for l in daydata:
                 tmp = [i[8]]+[i.text.replace('℃','') for i in l.select('td')]
@@ -119,10 +100,7 @@ class DailyWeather(object):
                 airsep = lambda x: x.index(checkair[0]) if len(checkair) > 0 else len(x)
                 updatetime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 daily = [tmp[0], tmp[1][0:10], tmp[2], tmp[3], tmp[5][0:winsep(tmp[5])], tmp[5][winsep(tmp[5]):], tmp[6][0:airsep(tmp[6])], tmp[6][airsep(tmp[6]):], updatetime]
-                if self.quote:
-                    data.append(["'{}'".format(i) for i in daily])
-                else:
-                    data.append(daily)
+                data.append(daily)
             # self.outputFile(self.data)
         except Exception as e:
             # time.sleep(25)
