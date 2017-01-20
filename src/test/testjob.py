@@ -11,7 +11,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from job.spiderjob import AllSpiderJobs, SpiderJob
 from historyweather import HistoryWeather
 from forecast import ForecastWeather
-from urllib.request import urlopen, Request, urlretrieve
+from daily import DailyWeather
 
 
 # if __name__ == "__main__":
@@ -98,6 +98,8 @@ class TestFcast(unittest.TestCase):
     def test_getcitydata(self):
         self.data = self.fc.getCityData(self.city, self.url)
         self.fc.outputData(self.datadir, self.fn, self.data)
+        self.assertEqual(os.path.exists(self.fn) , True)
+        print("[{}: {}] - {} ".format(self.__class__.__name__, self.test_getcitydata.__name__, self.fn))
 
         # raw_url = 'https://www.python.org'
         # url = Request(raw_url)
@@ -110,13 +112,50 @@ class TestFcast(unittest.TestCase):
         # print(response.getheader('Server'))
         # print(response.getheaders())
 
+    def test_getcities(self):
+        self.fc.getCities()
+        self.assertEqual(self.fc.cities[0][0] , 'acheng')
+        print("[{}: {}] - total {} tasks!".format(self.__class__.__name__, self.test_getcities.__name__, len(self.fc.cities)))
+
+class TestDaily(unittest.TestCase):
+    def setUp(self):
+        self.dw = DailyWeather()
+        self.dw.quote = True
+        self.dw.cssprov = "#selectProv > option:nth-of-type(24)"
+        self.dw.csscity = "#chengs_ls > option:nth-of-type(11)"
+        self.geo = []
+        #self.city = ['S', '山西', 'Y', '运城', 'Y', '永济', '32', '32,10', '60235']
+        self.city = ['X', '香港', 'X', '香港', 'X', '香港', '39', '39,0', '45007']
+        self.data = []
+        self.datadir = "data/{}/{}".format(self.dw.datatype, self.city[8])
+        self.fn = "{}/{}_{}.csv".format(self.datadir, self.city[8], self.dw.month)
+
+    # def test_header(self):
+    #     self.driver = self.dw.cusHeader()
+    #     cap_dict = self.driver.desired_capabilities
+    #     self.assertEqual(cap_dict['phantomjs.page.customHeaders.Referer'] , self.dw.tmpurl)
+    #     print("[{}: {}] - Referer => {}".format(self.__class__.__name__, self.test_header.__name__, self.dw.tmpurl))
+    #     # for key in cap_dict:
+    #     #     print("[header] - {}: {}".format(key, cap_dict[key]))
+
+    def test_getcitydata(self):
+        st = datetime.datetime.now()
+        self.data = self.dw.getDataMulti(self.city)
+        et = datetime.datetime.now()
+        self.dw.outputData(self.datadir, self.fn, self.data)
+        self.assertEqual(os.path.exists(self.fn) , True)
+        print("[{}: {}] - {} with {} secs!".format(self.__class__.__name__, self.test_getcitydata.__name__, self.fn, (et - st).seconds))
+
     # def test_getcities(self):
-    #     self.fc.getCities()
-    #     self.assertEqual(self.fc.cities[0][0] , 'acheng')
-    #     print("[{}: {}] - total {} tasks!".format(self.__class__.__name__, self.test_getcities.__name__, len(self.fc.cities)))
+    #     st = datetime.datetime.now()
+    #     self.cities = self.dw.getCities()
+    #     et = datetime.datetime.now()
+    #     self.assertEqual(self.cities[0][8] , '60236')
+    #     print("[{}: {}] - get {} cities with {} secs!".format(self.__class__.__name__, self.test_getcities.__name__, len(self.cities), (et - st).seconds))
+
 
 if __name__ == '__main__':
-    suite = unittest.TestLoader().loadTestsFromTestCase(TestFcast)
+    suite = unittest.TestLoader().loadTestsFromTestCase(TestDaily)
     unittest.TextTestRunner(verbosity=2).run(suite)
     # verbosity shows test_getcities (__main__.TestHis) ... ok insteat of .
     # unittest.main()

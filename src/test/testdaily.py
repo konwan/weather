@@ -16,10 +16,6 @@ class TestDL(unittest.TestCase):
         # self.driver.set_window_size(1120, 550)
         print("[url] - {} ".format(self.url))
 
-    def test_header(self):
-        cap_dict = self.driver.desired_capabilities
-        for key in cap_dict:
-            print("[header] - {}: {}".format(key, cap_dict[key]))
 
     def test_url(self):
         i = ['X', '香港', 'X', '香港', 'X', '香港', '39', '39,0', '45007']
