@@ -41,6 +41,7 @@ getcode(){
         sudo chown ${devuser}:${devuser} ${now}
     fi
     cd ${now}
+    sudo rm -rf ${prj}
     showinfo "Get latest spider code"
     git clone -b weather git@bitbucket.org:goming/${prj}.git
     sudo cp -R ${prj} /home/${user}
