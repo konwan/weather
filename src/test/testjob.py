@@ -128,7 +128,7 @@ class TestDaily(unittest.TestCase):
     def setUp(self):
         self.dw = DailyWeather()
         self.dw.quote = True
-        self.dw.browser = "chrome"
+        # self.dw.browser = "chrome"
         self.dw.cssprov = "#selectProv > option:nth-of-type(24)"
         self.dw.csscity = "#chengs_ls > option:nth-of-type(11)"
         self.geo = []
