@@ -65,6 +65,8 @@ def doJob(*args):
         except Empty:
             pass
     et = datetime.datetime.now()
+    # is_main_thread_active = lambda : any((i.name == "MainThread") and i.is_alive() for i in threading.enumerate())
+    # print(is_main_thread_active())
     print("[{}] Spending time={}!".format(threading.current_thread().name, (et - st).seconds))
 
 
@@ -76,8 +78,8 @@ if __name__ == "__main__":
 
     if type == "daily":
         dwo = DailyWeather()
-        dwo.browser = "chrome"
-        dwo.cssprov = "#selectProv > option:nth-of-type(31)"
+        # dwo.browser = "chrome"
+        # dwo.cssprov = "#selectProv > option:nth-of-type(31)"
         # dwo.csscity = "#chengs_ls > option:nth-of-type(11)"
         cities = dwo.getCities()
         for i in cities:
@@ -100,3 +102,4 @@ if __name__ == "__main__":
         t = threading.Thread(target=doJob, name='Doer{}'.format(j), args=(que,))
         threads.append(t)
         t.start()
+        # t.join(timeout=1)
