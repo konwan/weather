@@ -29,7 +29,7 @@ class AllSpiderJobs(object):
         st = datetime.datetime.now()
         while self.jobque.qsize() > 0:
             job = self.jobque.get()
-            # job.getdata()
+            job.getdata()
         et = datetime.datetime.now()
         totalsec = (et - st).seconds
         print("[{}] Spending time={}!".format(threading.current_thread().name, totalsec))
@@ -41,17 +41,9 @@ class SpiderJob(object):
         self.getdatatime = getdatatime
 
     def getdata(self):
-        time.sleep(2)
+        time.sleep(3)
         # time.sleep(random.randint(0, 2))
         print(self.city, self.url)
 
     def __repr__(self):
         return "<Job(url='{}')>".format(self.url)
-    # def history(self):
-    #     HistoryWeather(self.city, self.month).getdata()
-    #
-    # def daily(self):
-    #     DailyWeather().getDataMulti(self.city)
-    #
-    # def forecast(self):
-    #     ForecastWeather(self.city, self.url).getno7()

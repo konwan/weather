@@ -1,93 +1,102 @@
 # -*- coding: UTF-8 -*-
 import os
 import sys
+import queue
+from queue import Empty
+import threading
+import random
 import datetime
 import time
 from job.spiderjob import AllSpiderJobs
-from history import HistoryWeather
-from forecast import ForecastWeather
-# from daily import DailyWeather
+from history import HistoryWeather, getCities as hisgetCities
+from forecast import ForecastWeather, getCities as forgetCities
+from daily import DailyWeather
 
-class HisJobs(AllSpiderJobs):
-    def __init__(self, *args, **kwargs):
-        super(HisJobs, self).__init__(*args, **kwargs)
-        # def __init__(self, thread_cnt=30):
-        self.hw = HistoryWeather()
-        self.hw.citiesid = "city_O"
-        self.hw.all = True
-        self.hw.getCities()
-        self.jobs = self.hw.cities
+class HisJob(object):
+    def __init__(self, city, month):
+        self.city = city
+        self.month = month
+        self.datatype = "history"
+        self.datadir = "data/{}/{}".format(self.datatype, self.city)
+        self.today = datetime.datetime.now().strftime("%Y%m%d")
+        self.fn = "{}/{}_{}.csv".format(self.datadir, self.city, self.month)
 
-    def addJob(self):
-        for i, x in enumerate(self.jobs):
-            city = x[0]
-            month = x[1]
-            self.jobque.put(self.hw.getCityData(city, month))
+    def do(self):
+        hw = HistoryWeather()
+        data = hw.getCityData(self.city, self.month)
+        hw.outputData(self.datadir, self.fn, data)
 
-    def doJob(self):
-        st = datetime.datetime.now()
-        while self.jobque.qsize() > 0:
-            job = self.jobque.get()
-            # job.getdata()
-        et = datetime.datetime.now()
-        totalsec = (et - st).seconds
-        print("[{}] Spending time={}!".format(threading.current_thread().name, totalsec))
+class ForJob(object):
+    def __init__(self, city, url):
+        self.city = city
+        self.url = url
+        self.datatype = "shit"
+        self.datadir = "data/{}/{}".format(self.datatype, self.city)
+        self.today = datetime.datetime.now().strftime("%Y%m%d")
+        self.fn = "{}/{}_{}.csv".format(self.datadir, self.city, self.today)
 
+    def do(self):
+        fw = ForecastWeather()
+        data = fw.getCityData(self.city, self.url)
+        fw.outputData(self.datadir, self.fn, data)
 
-class ForJobs(AllSpiderJobs, ForecastWeather):
-    def __init__(self, *args, **kwargs):
-        super(ForJobs, self).__init__(*args, **kwargs)
-        self.jobs = self.getCities()
+class DalJob(object):
+    def __init__(self, city):
+        self.city = city
+        self.datatype = "daily"
+        self.datadir = "data/{}/{}".format(self.datatype, self.city[8])
+        self.today = datetime.datetime.now()
+        self.month = (self.today - datetime.timedelta(days=1)).strftime("%Y%m")
+        self.fn = "{}/{}_{}.csv".format(self.datadir, self.city[8], self.month)
 
-    def addJob(self):
-        for i, x in enumerate(self.jobs):
-            city = x[0]
-            url = x[1]
-            self.jobque.put(self.getCityData(city, url))
+    def do(self):
+        dw = DailyWeather()
+        data = dw.getCityData(self.city)
+        dw.outputData(self.datadir, self.fn, data)
 
-    def doJob(self):
-        st = datetime.datetime.now()
-        while self.jobque.qsize() > 0:
-            job = self.jobque.get()
-            # self.outputData(self.datadir, self.fn, self.data)
-        et = datetime.datetime.now()
-        totalsec = (et - st).seconds
-        print("[{}] Spending time={}!".format(threading.current_thread().name, totalsec))
-# class DoSpiderJob(object):
-#     def __init__(self, type='history', city='', url='', getdatatime=''):
-#         self.type = type
-#         self.city = city
-#         self.url = url
-#         self.getdatatime = getdatatime
-#
-#     def getdata(self):
-#         his = HistoryWeather()
-#         his.getCities()
-#         cts = HistoryWeather.getdata()
-#         time.sleep(random.randint(0, 2))
-#         print(self.city, self.url)
-#
-#     # def __repr__(self):
-#     #     return "<Job(url='{}')>".format(self.url)
-#     # # def history(self):
-#     # #     HistoryWeather(self.city, self.month).getdata()
-#     # self.data = self.his.getCityData(tmpcy, tmpmon)
-#     # #
-#     # # def daily(self):
-#     # #     DailyWeather().getDataMulti(self.city)
-#     # self.data = self.dw.getDataMulti(self.city)
-#     # #
-#     # # def forecast(self):
-#     # #     ForecastWeather(self.city, self.url).getno7()
-#     # self.data = self.fc.getCityData(self.city, self.url)
+def doJob(*args):
+    st = datetime.datetime.now()
+    que = args[0]
+    while que.qsize() > 0:
+        time.sleep(random.randint(0, 2))
+        try:
+            job = que.get(block=True, timeout=0.1)
+            job.do()
+        except Empty:
+            pass
+    et = datetime.datetime.now()
+    print("[{}] Spending time={}!".format(threading.current_thread().name, (et - st).seconds))
 
 
 if __name__ == "__main__":
-    # h = HisJobs()
-    # h.addJob()
-    # h.addThread()
-    # f = ForJobs()
-    # f.addJob()
-    # # f.doJob()
-    # f.addThread()
-    pass
+    type = sys.argv[1]
+    threads = []
+    que = queue.Queue()
+    thread_cnt = 10
+
+    if type == "daily":
+        dwo = DailyWeather()
+        dwo.browser = "chrome"
+        dwo.cssprov = "#selectProv > option:nth-of-type(31)"
+        # dwo.csscity = "#chengs_ls > option:nth-of-type(11)"
+        cities = dwo.getCities()
+        for i in cities:
+            que.put(DalJob(i))
+
+    elif type == "forecast":
+        cities = hisgetCities()
+        for i in cities:
+            que.put(HisJob(i[0], i[1]))
+
+    elif type == "history":
+        cities = forgetCities()
+        for i in cities:
+            que.put(ForJob(i[0], i[1]))
+
+    else:
+        print("enter a type  daily| forecast| history")
+        sys.exit()
+    for j in range(thread_cnt):
+        t = threading.Thread(target=doJob, name='Doer{}'.format(j), args=(que,))
+        threads.append(t)
+        t.start()
