@@ -16,42 +16,12 @@ from job.spiderjob import AllSpiderJobs, SpiderJob
 from outputdata import OutputData
 
 class HistoryWeather(OutputData):
-
     def __init__(self, *args, **kwargs):
         super(HistoryWeather, self).__init__(*args, **kwargs)
         self.datatype = "history"
         self.updatetime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self.dir_path = os.path.dirname(os.path.realpath('__file__'))
         self.checknum = 71
-        self.finished = ['bagong-mountainqu']
-        self.lastmonth = datetime.datetime.now()+relativedelta(months=-1)
-        self.cal_mon = self.lastmonth.strftime("%Y%m")
-        self.dates = [self.cal_mon]
-        self.citiesid = "tool_site"
-        self.cities = []
-        self.all = False
-
-
-    def getCities(self):
-        url = 'http://lishi.tianqi.com/'
-        response = urlopen('http://lishi.tianqi.com/')
-        soup1 = BeautifulSoup(response.read(), "lxml", from_encoding="GBK")
-        tmpcities = soup1.find(id=self.citiesid).find_all('a')
-        for i, x in enumerate(tmpcities):
-            if x['href'] != '#':
-                ename = x['href'].split("/")[3]
-                cname = x.string
-                datadir = "{}/{}".format(self.datatype, ename)
-
-                if ename in self.finished:
-                    continue
-                if self.all :
-                    daterange = urlopen('http://lishi.tianqi.com/{}/index.html'.format(ename))
-                    date = BeautifulSoup(daterange.read(), "lxml", from_encoding="GBK")
-                    self.dates = [x['value'] for x in date.find(id="tool_site").find_all('option') if x['value'] != ""]
-
-                for y in self.dates:
-                    self.cities.append((ename, y))
 
     def getCityData(self, city, month):
         data = []
@@ -71,3 +41,32 @@ class HistoryWeather(OutputData):
         except Exception as e:
             print('[get data fail] {} => {}'.format(url, str(e)))
         return data
+
+
+def getCities(ctid="tool_site", alldate=False):
+    skip = ['bagong-mountainqu']
+    lastmonth = datetime.datetime.now()+relativedelta(months=-1)
+    cal_mon = lastmonth.strftime("%Y%m")
+    dates = [cal_mon]
+    all = alldate
+    citiesid = ctid
+    cities = []
+    url = 'http://lishi.tianqi.com/'
+    response = urlopen('http://lishi.tianqi.com/')
+    soup1 = BeautifulSoup(response.read(), "lxml", from_encoding="GBK")
+    tmpcities = soup1.find(id=citiesid).find_all('a')
+    for i, x in enumerate(tmpcities):
+        if x['href'] != '#':
+            ename = x['href'].split("/")[3]
+            cname = x.string
+
+            if ename in skip:
+                continue
+            if all :
+                daterange = urlopen('http://lishi.tianqi.com/{}/index.html'.format(ename))
+                date = BeautifulSoup(daterange.read(), "lxml", from_encoding="GBK")
+                dates = [x['value'] for x in date.find(id="tool_site").find_all('option') if x['value'] != ""]
+
+            for y in dates:
+                cities.append((ename, y))
+    return cities
