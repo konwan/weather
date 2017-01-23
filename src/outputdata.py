@@ -3,7 +3,7 @@ import os
 
 class OutputData(object):
     def __init__(self):
-        self.quote = False
+        self.quote = True
 
     def outputData(self, datadir, filename, data):
         if not os.path.exists(datadir):

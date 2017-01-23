@@ -73,11 +73,11 @@ getfile(){
     fi
     filename=${upload_dir}/${gettype}_${today}.csv
     if [ "${gettype}" == 'forecast' ]; then
-        find ${upload_data}/7days -name "*_${today}.csv" -exec cat {} \; | grep -v '日期' > ${filename}
+        find ${upload_data}/forecast -name "*_${today}.csv" -exec cat {} \; | grep -v '日期' > ${filename}
     elif [ "${gettype}" == 'daily' ];then
         find ${upload_data}/daily -name "*_${thismonth}.csv" -exec cat {} \; | grep -v '日期' > ${filename}
     else
-        find ${upload_data}/weather -name "*_${lastmonth}.csv" -exec cat {} \; | grep -v '日期' > ${filename}
+        find ${upload_data}/history -name "*_${lastmonth}.csv" -exec cat {} \; | grep -v '日期' > ${filename}
     fi
 }
 

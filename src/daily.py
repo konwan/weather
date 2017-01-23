@@ -17,10 +17,9 @@ from outputdata import OutputData
 class DailyWeather(OutputData):
     def __init__(self, *args, **kwargs):
         super(DailyWeather, self).__init__(*args, **kwargs)
-        # self.dir_path = "/opt/weather"
-        # self.phantomjs_path = r"{}/phantomjs/bin/phantomjs".format(self.dir_path)
+        self.dir_path = "/opt/weather"
         self.browser = "phantomjs"
-        self.driver_path = ""
+        self.driver_path = r"{}/phantomjs/bin/phantomjs".format(self.dir_path)
         self.tmpurl = "http://tianqi.2345.com/wea_history/71294.htm"
         self.agent = "Mozilla/{x}.0 (Macintosh; Intel Mac OS X 10.9; rv:{x}.0) Firefox/{x}.0".format(x=random.randint(0,30))
         self.datatype = "daily"
@@ -33,7 +32,7 @@ class DailyWeather(OutputData):
             tmpurl = self.tmpurl
 
         if self.browser == "phantomjs" :
-            self.driver_path = r"/Users/data/Downloads/phantomjs-2.1.1-macosx/bin/phantomjs"
+            # self.driver_path = r"/Users/data/Downloads/phantomjs-2.1.1-macosx/bin/phantomjs"
             # self.driver_path = r"{}/phantomjs/bin/phantomjs".format(self.dir_path)
 
             # dcap = dict(DesiredCapabilities.PHANTOMJS)

@@ -67,7 +67,7 @@ class TestHis(unittest.TestCase):
     def test_outputdata(self):
         cities = hisgetCities(ctid=self.citiesid, alldate=self.all)
         st = datetime.datetime.now()
-        for i in cities:
+        for i in cities[0:5]:
             tmpcy = i[0]
             tmpmon = i[1]
             time.sleep(random.randint(0, 2))
