@@ -15,10 +15,11 @@ from daily import DailyWeather
 
 class HisJob(object):
     def __init__(self, city, month):
+        self.dir_path = "/opt/weather/data"
         self.city = city
         self.month = month
         self.datatype = "history"
-        self.datadir = "data/{}/{}".format(self.datatype, self.city)
+        self.datadir = "{}/{}/{}".format(self.dir_path, self.datatype, self.city)
         self.today = datetime.datetime.now().strftime("%Y%m%d")
         self.fn = "{}/{}_{}.csv".format(self.datadir, self.city, self.month)
 
@@ -29,10 +30,11 @@ class HisJob(object):
 
 class ForJob(object):
     def __init__(self, city, url):
+        self.dir_path = "/opt/weather/data"
         self.city = city
         self.url = url
-        self.datatype = "shit"
-        self.datadir = "data/{}/{}".format(self.datatype, self.city)
+        self.datatype = "forecast"
+        self.datadir = "{}/{}/{}".format(self.dir_path, self.datatype, self.city)
         self.today = datetime.datetime.now().strftime("%Y%m%d")
         self.fn = "{}/{}_{}.csv".format(self.datadir, self.city, self.today)
 
@@ -43,9 +45,10 @@ class ForJob(object):
 
 class DalJob(object):
     def __init__(self, city):
+        self.dir_path = "/opt/weather/data"
         self.city = city
         self.datatype = "daily"
-        self.datadir = "data/{}/{}".format(self.datatype, self.city[8])
+        self.datadir = "{}/{}/{}".format(self.dir_path, self.datatype, self.city[8])
         self.today = datetime.datetime.now()
         self.month = (self.today - datetime.timedelta(days=1)).strftime("%Y%m")
         self.fn = "{}/{}_{}.csv".format(self.datadir, self.city[8], self.month)
@@ -75,8 +78,8 @@ if __name__ == "__main__":
     type = sys.argv[1]
     threads = []
     que = queue.Queue()
-    thread_cnt = 10
-
+    thread_cnt = 20
+    print("[{} - {}] start get data !".format(datetime.datetime.now(), type))
     if type == "daily":
         dwo = DailyWeather()
         # dwo.browser = "chrome"
@@ -99,6 +102,7 @@ if __name__ == "__main__":
     else:
         print("enter a type  daily| forecast| history")
         sys.exit()
+
     for j in range(thread_cnt):
         t = threading.Thread(target=doJob, name='Doer{}'.format(j), args=(que,))
         threads.append(t)
