@@ -86,14 +86,14 @@ if __name__ == "__main__":
             que.put(DalJob(i))
 
     elif type == "forecast":
-        cities = hisgetCities()
-        for i in cities:
-            que.put(HisJob(i[0], i[1]))
-
-    elif type == "history":
         cities = forgetCities()
         for i in cities:
             que.put(ForJob(i[0], i[1]))
+
+    elif type == "history":
+        cities = hisgetCities()
+        for i in cities:
+            que.put(HisJob(i[0], i[1]))
 
     else:
         print("enter a type  daily| forecast| history")
